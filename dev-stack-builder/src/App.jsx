@@ -1,122 +1,103 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import TechCard from './components/TechCard';
+import Sidebar from './components/Sidebar';
+import Footer from './components/Footer';
+
+export default function App() {
+  const [technologies, setTechnologies] = useState([]);
+  const [selectedStack, setSelectedStack] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load JSON Data with useEffect
+  useEffect(() => {
+    fetch('/technologies.json')
+      .then((res) => res.json())
+      .then((data) => {
+        setTechnologies(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Data loading error:', err);
+        setLoading(false);
+      });
+  }, []);
+
+  // Add to stack handler
+  const handleAdd = (tech) => {
+    const exists = selectedStack.some((item) => item.id === tech.id);
+    if (exists) {
+      toast.warning(`${tech.name} is already added!`);
+      return;
+    }
+    setSelectedStack([...selectedStack, tech]);
+    toast.success(`Added ${tech.name} to stack!`);
+  };
+
+  // Remove single item
+  const handleRemove = (id) => {
+    const item = selectedStack.find((i) => i.id === id);
+    setSelectedStack(selectedStack.filter((i) => i.id !== id));
+    toast.info(`Removed ${item?.name} from stack.`);
+  };
+
+  // Remove all
+  const handleRemoveAll = () => {
+    setSelectedStack([]);
+    toast.error('Cleared all stack items!');
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen bg-white text-gray-800 font-sans">
+      <ToastContainer position="top-right" autoClose={2000} />
+      
+      <Navbar />
+      <Hero />
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      {/* Main Grid Section */}
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        <div className="mb-10">
+          <h2 className="text-3xl font-extrabold text-gray-900">
+            Explore the <span className="bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">Technologies</span>
+          </h2>
+          <p className="text-gray-500 text-sm mt-1">Pick one technology per category to build your ideal stack.</p>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
+        {loading ? (
+          <div className="py-20 text-center text-gray-400 font-medium">
+            Loading technologies...
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Cards Area (3 Columns) */}
+            <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {technologies.map((tech) => (
+                <TechCard
+                  key={tech.id}
+                  tech={tech}
+                  isAdded={selectedStack.some((item) => item.id === tech.id)}
+                  onAdd={handleAdd}
+                />
+              ))}
+            </div>
 
-export default App
+            {/* Sidebar (1 Column) */}
+            <div className="lg:col-span-1">
+              <Sidebar
+                selectedStack={selectedStack}
+                onRemove={handleRemove}
+                onRemoveAll={handleRemoveAll}
+              />
+            </div>
+          </div>
+        )}
+      </main>
+
+      <Footer />
+    </div>
+  );
+} 

@@ -1,16 +1,33 @@
-# React + Vite
+##  React Questions & Answers
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+### 1. What is JSX, and why is it used in React?
+Answer: JSX is a simple way to write HTML code inside JavaScript files in React. It is used because it makes writing UI easy to read and helps us put HTML structure and JavaScript logic together in one place.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## React Compiler
+### 2. What is the difference between props and state?
+Answer:
+Props: Data passed from a parent component to a child. The child cannot change this data (it is read-only).
+State: Data created inside a component that can change when a user clicks something or does an action. When state changes, the UI updates.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the Oxlint configuration
+### 3. What does the useState hook do, and where did you use it in this project?
+Answer:The `useState` hook helps functional components create and manage their own state. In this project, I used it in `App.jsx` to hold the technology list, manage the items added to the stack, and handle the loading spinner state.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+
+### 4. What does the useEffect hook do, and why did you need it to load the JSON data?
+Answer: The `useEffect` hook runs side effects like fetching data from an API or file. I used it to load the `technologies.json` file once when the page loads so it doesn't fetch data again and again on every render.
+
+
+### 5. Why does every item in a .map() list need a unique key prop?
+Answer: React needs a unique `key` to identify each item in a list. It helps React know which item changed, added, or deleted, so it can update only that specific item instead of re-rendering the whole list.
+
+
+### 6. What is conditional rendering? Show one place you used it.
+Answer: Conditional rendering means showing different UI parts based on a condition (like using `? :` or `&&`). I used it in the Sidebar to show "Your Stack is empty" when no items are added, and show the selected list when items are added.
+
+
+### 7. How do you pass data from a parent component to a child component, and how does a child send something back to the parent?
+Answer:
+Parent to Child:We pass data down using props.
+ Child to Parent: The parent passes a function to the child as a prop, and when the child runs that function with some data, the parent receives it.
